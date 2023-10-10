@@ -1,0 +1,123 @@
+Question 01
+Amazon Web services has n servers lined up in a row. the ith server has the capacity of capacity[i]. Any application can be deployed on a balanced contiguous subsegment of 3 or more servers.
+
+A contiguous segement, [l, r] of servers is said to be balanced if capacity[l] = capacity[r] = sum[capacity[l + 1]...capacity[r - 1]] i.e. the capacity of the servers at the endpoints of the segment should be equal to the sum of the capacity of all the interior servers.
+
+Given the capacity of each server in a row, find the number of balanced subsegements in it.
+
+Samples 01
+assert(findBalancedSubsegments([9, 3, 3, 3, 9]) == 2)
+assert(findBalancedSubsegments([9, 3, 1, 2, 3, 9, 10]) == 2)
+assert(findBalancedSubsegments([6, 1, 2, 3, 6]) == 1)
+Question 02
+There are n products begin sold on the Amazon Online shopping app. The price of the ithproduct is price[i]. The developers at Amazon decided to give special gift cards to innovative customers. A gift card will be given if any customer buys a contiguous subsegment of products and at least 2 of the products have a matching price. Find the minimum amount of money a customer needs to spend in order to get the gift card. If is is not possible for any customer to get a gift card, return -1.
+
+Samples 02
+assert(findMinimumPrice([1, 2, 3, 1, 2, 1]) == 4)
+assert(findMinimumPrice([1, 2, 1, 2]) == 4)
+assert(findMinimumPrice([1, 100, 1, 7, 7]) == 14)
+Solution 01
+def findBalancedSubsegments(capacity):
+    n = len(capacity)
+    prefix_sum = [0] * n
+    for i in range(n):
+        if i - 1 >= 0:
+            prefix_sum[i] += prefix_sum[i - 1]
+        prefix_sum[i] += capacity[i]
+
+    from collections import defaultdict
+    
+    idxs = defaultdict(list)
+    for i in range(n):
+        idxs[capacity[i]].append(i)
+
+    res = 0
+
+    for key, value in idxs.items():
+        m = len(value)
+        for i in range(m):
+            if i + 1 < m:
+                left_index, right_index = value[i], value[i + 1]
+                if prefix_sum[right_index - 1] - prefix_sum[left_index] == key:
+                    res += 1
+            if i + 2 < m:
+                left_index, right_index = value[i], value[i + 2]
+                if prefix_sum[right_index - 1] - prefix_sum[left_index] == key:
+                    res += 1
+    
+    return res
+Solution 02
+def findMinimumPrice(price):
+    n = len(price)
+    prefix_sum = [0] * n
+    for i in range(n):
+        if i - 1 >= 0:
+            prefix_sum[i] += prefix_sum[i - 1]
+        prefix_sum[i] += price[i]
+
+    from collections import defaultdict
+    
+    idxs = defaultdict(list)
+    for i in range(n):
+        idxs[price[i]].append(i)
+
+    INF = 10 ** 18
+    res = INF
+    for key, value in idxs.items():
+        m = len(value)
+        for i in range(m):
+            if i + 1 < m:
+                left_index, right_index = value[i], value[i + 1]
+                res = min(res, prefix_sum[right_index] - (prefix_sum[left_index - 1] if left_index - 1 >= 0 else 0))
+
+    return -1 if res == INF else res
+
+
+
+hashmap
+prefix sum
+oa
+2025 grad
+amazon
+Comments: 3
+BestMost VotesNewest to OldestOldest to Newest
+Type comment here... (Markdown is supported)
+
+Preview
+
+Post
+aryonbe's avatar
+aryonbe
+
+826
+Last Edit: 4 hours ago
+
+Read More
+Any ideas when negative capacities are allowed for the Q1?
+
+0
+Show 1 reply
+Reply
+Share
+Report
+bishalkundu17's avatar
+bishalkundu17
+
+24
+4 hours ago
+
+Read More
+On campus or off campus??
+If off campus then is it through wow?
+0
+Reply
+Share
+Report
+SameemSh's avatar
+SameemSh
+
+0
+4 hours ago
+
+Read More
+Both of them are very alike. Using map and prefix sum concept is the easiest way to get optimized solution that is linear space and time complexity.
